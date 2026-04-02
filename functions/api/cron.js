@@ -80,7 +80,7 @@ export async function onRequestPost(context) {
       const reportToken = generateToken();
       const report = {
         token: reportToken,
-        clientName: `Instagram ${postType} â ${postDate}`,
+        clientName: `Instagram ${postType} - ${postDate}`,
         leadId: null,
         posts: [{
           url: media.permalink,
