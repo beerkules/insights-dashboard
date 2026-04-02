@@ -239,4 +239,3 @@ export async function onRequestOptions() {
     },
   });
 }
-
