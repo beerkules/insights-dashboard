@@ -1,24 +1,34 @@
 /**
- * Cron Worker — Post Detection + Close.com Task + Email
+ * Cron Worker â Post Detection + Auto-Report + Email Notification
  *
  * Called periodically (via scheduled task or manual trigger).
  * 1. Fetches latest Instagram posts
  * 2. Detects new posts not yet seen
- * 3. Stores new posts in KV with firstSeen date
- * 4. For posts 7+ days old: creates Close.com task + sends email
+ * 3. Auto-creates a report with magic link
+ * 4. Sends notification via Telegram + email-ready info
  *
- * Env vars: META_PAGE_TOKEN, IG_ACCOUNT_ID, CLOSE_API_KEY
+ * Env vars: META_PAGE_TOKEN, IG_ACCOUNT_ID, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
  * KV binding: REPORTS
  *
- * Trigger manually: POST /api/cron
+ * Trigger: POST /api/cron
  */
 
 const GRAPH_API = 'https://graph.facebook.com/v25.0';
+const BASE_URL = 'https://dashboard.hashtaghamburg.de';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Content-Type': 'application/json',
 };
+
+function generateToken() {
+  const chars = 'abcdefghijkmnpqrstuvwxyz23456789';
+  let token = '';
+  const bytes = new Uint8Array(12);
+  crypto.getRandomValues(bytes);
+  for (const b of bytes) token += chars[b % chars.length];
+  return token;
+}
 
 async function graphGet(path, token) {
   const sep = path.includes('?') ? '&' : '?';
@@ -35,7 +45,6 @@ export async function onRequestPost(context) {
   try {
     const token = env.META_PAGE_TOKEN;
     const igAccountId = env.IG_ACCOUNT_ID || '17841409607773752';
-    const closeApiKey = env.CLOSE_API_KEY;
     const KV = env.REPORTS;
 
     if (!token || !KV) {
@@ -44,7 +53,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    const results = { newPosts: [], tasksCreated: [], errors: [] };
+    const results = { newPosts: [], reportsCreated: [], notificationsSent: [], errors: [] };
 
     // 1. Fetch latest 10 Instagram posts
     const mediaList = await graphGet(
@@ -56,48 +65,58 @@ export async function onRequestPost(context) {
       const kvKey = `post:ig:${media.id}`;
       const existing = await KV.get(kvKey, 'json');
 
-      if (!existing) {
-        // New post! Store it
-        const postRecord = {
-          mediaId: media.id,
+      if (existing) continue; // Already tracked
+
+      // New post detected!
+      const postType = media.media_product_type === 'REELS' ? 'Reel' :
+            media.media_type === 'CAROUSEL_ALBUM' ? 'Carousel' :
+            media.media_type === 'VIDEO' ? 'Video' : 'Foto';
+
+      const postDate = new Date(media.timestamp).toLocaleDateString('de-DE', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      });
+
+      // 2. Auto-create report
+      const reportToken = generateToken();
+      const report = {
+        token: reportToken,
+        clientName: `Instagram ${postType} â ${postDate}`,
+        leadId: null,
+        posts: [{
+          url: media.permalink,
           platform: 'instagram',
-          permalink: media.permalink,
-          caption: (media.caption || '').substring(0, 200),
-          type: media.media_product_type === 'REELS' ? 'Reel' :
-                media.media_type === 'CAROUSEL_ALBUM' ? 'Carousel' :
-                media.media_type === 'VIDEO' ? 'Video' : 'Foto',
-          postedAt: media.timestamp,
-          firstSeen: new Date().toISOString(),
-          taskCreated: false,
-        };
+          mediaId: media.id,
+        }],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        autoCreated: true,
+      };
 
-        await KV.put(kvKey, JSON.stringify(postRecord));
-        results.newPosts.push({ id: media.id, type: postRecord.type, date: media.timestamp });
-      } else {
-        // Existing post — check if 7 days have passed and task not yet created
-        const firstSeen = new Date(existing.firstSeen);
-        const now = new Date();
-        const daysSince = (now - firstSeen) / (1000 * 60 * 60 * 24);
+      await KV.put(`report:${reportToken}`, JSON.stringify(report));
 
-        if (daysSince >= 7 && !existing.taskCreated && closeApiKey) {
-          try {
-            // Create Close.com task
-            await createCloseTask(closeApiKey, existing);
+      // 3. Store post tracking record
+      const postRecord = {
+        mediaId: media.id,
+        platform: 'instagram',
+        permalink: media.permalink,
+        caption: (media.caption || '').substring(0, 200),
+        type: postType,
+        postedAt: media.timestamp,
+        firstSeen: new Date().toISOString(),
+        reportToken: reportToken,
+      };
 
-            // Mark task as created
-            existing.taskCreated = true;
-            existing.taskCreatedAt = now.toISOString();
-            await KV.put(kvKey, JSON.stringify(existing));
+      await KV.put(kvKey, JSON.stringify(postRecord));
+      results.newPosts.push({ id: media.id, type: postType, date: media.timestamp });
+      results.reportsCreated.push({ token: reportToken, type: postType });
 
-            results.tasksCreated.push({
-              mediaId: existing.mediaId,
-              type: existing.type,
-              postedAt: existing.postedAt,
-            });
-          } catch (e) {
-            results.errors.push({ mediaId: existing.mediaId, error: e.message });
-          }
-        }
+      // 4. Send Telegram notification
+      const reportUrl = `${BASE_URL}/report?t=${reportToken}`;
+      try {
+        await sendTelegramNotification(env, postRecord, reportUrl);
+        results.notificationsSent.push({ mediaId: media.id, channel: 'telegram' });
+      } catch (e) {
+        results.errors.push({ mediaId: media.id, error: `Telegram: ${e.message}` });
       }
     }
 
@@ -112,39 +131,39 @@ export async function onRequestPost(context) {
   }
 }
 
-async function createCloseTask(apiKey, post) {
-  const postDate = new Date(post.postedAt).toLocaleDateString('de-DE');
-  const taskText = `📊 Report erstellen: ${post.type} vom ${postDate}\n\n` +
-    `Post: ${post.permalink}\n` +
-    `Caption: ${post.caption}\n\n` +
-    `Der Post ist jetzt 7 Tage alt — bitte Insights auswerten und Report an Kunden senden.`;
+async function sendTelegramNotification(env, post, reportUrl) {
+  const botToken = env.TELEGRAM_BOT_TOKEN;
+  const chatId = env.TELEGRAM_CHAT_ID;
 
-  // Create a task assigned to the org (unassigned — first available)
-  const res = await fetch('https://api.close.com/api/v1/task/', {
+  if (!botToken || !chatId) throw new Error('Telegram not configured');
+
+  const postDate = new Date(post.postedAt).toLocaleDateString('de-DE');
+  const caption = post.caption ? `\n\n_${post.caption.substring(0, 100)}${post.caption.length > 100 ? '...' : ''}_` : '';
+
+  const message =
+    `ð *Neuer Post erkannt!*\n\n` +
+    `Typ: *${post.type}*\n` +
+    `Datum: ${postDate}\n` +
+    `Post: ${post.permalink}${caption}\n\n` +
+    `ð *Report-Link fÃ¼r Kunden:*\n${reportUrl}\n\n` +
+    `â¡ï¸ Bitte an moin@hashtaghamburg.de weiterleiten`;
+
+  const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
     method: 'POST',
-    headers: {
-      'Authorization': 'Basic ' + btoa(apiKey + ':'),
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      _type: 'lead',
-      text: taskText,
-      is_complete: false,
-      // Due today
-      due_date: new Date().toISOString().split('T')[0],
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'Markdown',
+      disable_web_page_preview: false,
     }),
   });
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`Close API ${res.status}: ${err}`);
+    throw new Error(`Telegram ${res.status}: ${err}`);
   }
-
-  return await res.json();
 }
-
-// Also send notification email via Close
-// (Close tasks + email notification covers the requirement)
 
 export async function onRequestOptions() {
   return new Response(null, {
