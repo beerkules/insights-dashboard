@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Campaign Report — Hashtag Hamburg</title>
+<title>Campaign Report â Hashtag Hamburg</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,153 +13,290 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #111111; --bg-card: #1a1a1a; --bg-input: #1e1e1e;
-    --blue: #38B6FF; --blue-dark: #1A8FCC; --blue-glow: rgba(56,182,255,0.25);
-    --green: #34D399; --pink: #F472B6; --red: #F87171;
-    --orange: #FB923C; --tiktok: #ff0050;
-    --text: #ffffff; --text-sec: #aaaaaa; --text-muted: #555555;
-    --border: rgba(255,255,255,0.08); --border-light: rgba(255,255,255,0.12);
-    --radius: 16px; --radius-sm: 10px; --radius-xs: 6px;
+    --blue: #38B6FF;
+    --blue-dark: #1A8FCC;
+    --blue-soft: #EBF7FF;
+    --blue-mid: #D0EFFF;
+    --green: #10B981;
+    --green-soft: #ECFDF5;
+    --pink: #EC4899;
+    --red: #EF4444;
+    --orange: #F59E0B;
+    --tiktok: #ff0050;
+    --ig-gradient: linear-gradient(135deg, #833AB4, #E1306C, #F77737);
+    --bg: #F8FAFC;
+    --bg-white: #FFFFFF;
+    --text: #1E293B;
+    --text-sec: #64748B;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+    --radius: 20px;
+    --radius-sm: 14px;
+    --radius-xs: 8px;
   }
 
   body {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: radial-gradient(ellipse at 20% 0%, rgba(56,182,255,0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 30%, rgba(56,182,255,0.04) 0%, transparent 50%), var(--bg);
-    color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
 
-  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+  /* Hero Header */
+  .hero {
+    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%);
+    padding: 48px 24px 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -25%;
+    width: 150%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(56,182,255,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(236,72,153,0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+  .hero img { width: 160px; margin-bottom: 28px; filter: brightness(10); }
+  .hero h1 {
+    font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .hero .subtitle {
+    font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 400;
+  }
+  .hero .post-count-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(56,182,255,0.2); border: 1px solid rgba(56,182,255,0.3);
+    color: var(--blue); font-size: 12px; font-weight: 600;
+    padding: 6px 16px; border-radius: 50px; margin-top: 16px;
+    backdrop-filter: blur(8px);
+  }
 
-  /* Header */
-  .report-header {
-    text-align: center; padding: 48px 0 40px;
-  }
-  .report-header img { width: 180px; margin-bottom: 24px; }
-  .report-header h1 {
-    font-size: 28px; font-weight: 700; margin-bottom: 8px;
-  }
-  .report-header .subtitle {
-    font-size: 14px; color: var(--text-sec); font-weight: 400;
-  }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
-  /* Summary Cards */
+  /* Summary Cards â pulled up over hero */
+  .summary-section {
+    margin-top: -36px;
+    position: relative;
+    z-index: 2;
+    padding-bottom: 32px;
+  }
   .summary-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 16px; margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
   .summary-card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 20px; text-align: center;
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
+  .summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+  .summary-card .icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px; font-size: 20px;
+  }
+  .summary-card .icon.reach { background: var(--blue-soft); }
+  .summary-card .icon.interactions { background: #FEF3C7; }
+  .summary-card .icon.likes { background: #FDE7F3; }
+  .summary-card .icon.comments { background: #E0E7FF; }
+  .summary-card .icon.shares { background: var(--green-soft); }
+  .summary-card .icon.saves { background: #FFF7ED; }
   .summary-card .value {
-    font-size: 28px; font-weight: 700; color: var(--blue);
+    font-size: 30px; font-weight: 800; color: var(--text);
+    letter-spacing: -0.5px;
   }
   .summary-card .label {
     font-size: 11px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 1.5px; color: var(--text-sec); margin-top: 4px;
+    letter-spacing: 1.5px; color: var(--text-muted); margin-top: 2px;
   }
 
-  /* Post Cards */
-  .posts-section h2 {
-    font-size: 18px; font-weight: 700; margin-bottom: 20px;
-    display: flex; align-items: center; gap: 10px;
+  /* Posts Section */
+  .posts-section {
+    padding-bottom: 40px;
   }
+  .section-title {
+    font-size: 18px; font-weight: 700; color: var(--text);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .line {
+    flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* Platform Badge */
   .platform-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 11px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 1px; padding: 4px 10px; border-radius: 20px;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; padding: 5px 12px; border-radius: 50px;
+    color: #fff;
   }
-  .platform-badge.instagram { background: linear-gradient(135deg, #833AB4, #E1306C, #F77737); color: #fff; }
-  .platform-badge.tiktok { background: var(--tiktok); color: #fff; }
+  .platform-badge.instagram { background: var(--ig-gradient); }
+  .platform-badge.tiktok { background: var(--tiktok); }
 
+  /* Post Card */
   .post-card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 28px; margin-bottom: 20px;
-    transition: border-color 0.2s;
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
   }
-  .post-card:hover { border-color: var(--blue); }
+  .post-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
 
-  .post-meta {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  .post-card-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
   }
-  .post-type {
-    font-size: 11px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 1px; padding: 3px 8px; border-radius: 4px;
-    background: rgba(56,182,255,0.15); color: var(--blue);
+  .post-type-tag {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; padding: 4px 10px; border-radius: 6px;
+    background: var(--blue-soft); color: var(--blue-dark);
   }
-  .post-date { font-size: 13px; color: var(--text-sec); }
+  .post-date {
+    font-size: 13px; color: var(--text-sec); font-weight: 500;
+    margin-left: auto;
+  }
+
+  .post-card-body { padding: 24px; }
+
   .post-caption {
-    font-size: 13px; color: var(--text-sec); line-height: 1.6;
-    margin-bottom: 20px; max-height: 60px; overflow: hidden;
-    position: relative;
+    font-size: 13px; color: var(--text-sec); line-height: 1.7;
+    margin-bottom: 24px; padding: 16px;
+    background: var(--bg); border-radius: var(--radius-xs);
+    border-left: 3px solid var(--blue);
+    max-height: 80px; overflow: hidden; position: relative;
   }
   .post-caption::after {
     content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-    height: 30px; background: linear-gradient(transparent, var(--bg-card));
+    height: 30px; background: linear-gradient(transparent, var(--bg));
   }
 
+  /* Metrics Grid */
   .metrics-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
   }
   .metric {
-    background: var(--bg-input); border-radius: var(--radius-xs);
-    padding: 14px; text-align: center;
+    background: var(--bg);
+    border-radius: var(--radius-xs);
+    padding: 16px 12px;
+    text-align: center;
+    border: 1px solid transparent;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .metric:hover {
+    border-color: var(--blue);
+    background: var(--blue-soft);
   }
   .metric .num {
-    font-size: 22px; font-weight: 700; color: var(--text);
+    font-size: 24px; font-weight: 800; color: var(--text);
+    letter-spacing: -0.3px;
   }
   .metric .lbl {
     font-size: 10px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 1px; color: var(--text-muted); margin-top: 2px;
+    letter-spacing: 1.2px; color: var(--text-muted); margin-top: 3px;
   }
-  .metric.highlight .num { color: var(--blue); }
+  .metric.highlight { background: var(--blue-soft); border-color: var(--blue-mid); }
+  .metric.highlight .num { color: var(--blue-dark); }
 
-  .post-link {
-    display: inline-block; margin-top: 16px; font-size: 12px;
-    color: var(--blue); text-decoration: none; font-weight: 600;
+  .post-card-footer {
+    padding: 16px 24px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: flex-end;
   }
-  .post-link:hover { text-decoration: underline; }
+  .post-link {
+    font-size: 13px; color: var(--blue-dark); text-decoration: none;
+    font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
+    transition: gap 0.2s;
+  }
+  .post-link:hover { gap: 8px; }
+  .post-link .arrow { transition: transform 0.2s; }
+  .post-link:hover .arrow { transform: translateX(2px); }
 
   /* Loading / Error */
-  .loading, .error-msg {
-    text-align: center; padding: 80px 20px;
-  }
+  .loading, .error-msg { text-align: center; padding: 80px 20px; }
   .loading .spinner {
-    width: 40px; height: 40px; border: 3px solid var(--border);
-    border-top-color: var(--blue); border-radius: 50%;
-    animation: spin 0.8s linear infinite; margin: 0 auto 20px;
+    width: 44px; height: 44px;
+    border: 3px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 20px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .error-msg h2 { color: var(--red); margin-bottom: 8px; }
+  .error-msg h2 { color: var(--red); margin-bottom: 8px; font-size: 20px; }
 
   /* Footer */
   .report-footer {
-    text-align: center; padding: 40px 0 20px;
+    text-align: center; padding: 40px 0 48px;
     font-size: 12px; color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
   }
-  .report-footer a { color: var(--blue); text-decoration: none; }
+  .report-footer a {
+    color: var(--blue-dark); text-decoration: none; font-weight: 600;
+  }
+  .report-footer a:hover { text-decoration: underline; }
 
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     .summary-grid { grid-template-columns: repeat(2, 1fr); }
     .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-    .report-header h1 { font-size: 22px; }
+    .hero h1 { font-size: 24px; }
+    .hero { padding: 36px 20px 52px; }
+    .summary-section { margin-top: -28px; }
+  }
+  @media (max-width: 480px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .summary-card { padding: 16px 12px; }
+    .summary-card .value { font-size: 24px; }
+    .post-card-body { padding: 16px; }
+    .post-card-header { padding: 14px 16px; }
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- Header -->
-  <div class="report-header">
-    <img src="logo.svg" alt="Hashtag Hamburg">
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-content">
+    <img src="logo-dark.svg" alt="Hashtag Hamburg" onerror="this.src='logo.svg'">
     <h1 id="reportTitle">Campaign Report</h1>
     <div class="subtitle" id="reportSubtitle">Wird geladen...</div>
+    <div class="post-count-badge" id="postCountBadge" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3v18h18"/><path d="m7 17 4-8 4 4 6-10"/></svg>
+      <span id="postCountText"></span>
+    </div>
   </div>
+</div>
 
+<div class="container">
   <!-- Loading -->
   <div class="loading" id="loadingState">
     <div class="spinner"></div>
@@ -169,17 +306,16 @@
   <!-- Error -->
   <div class="error-msg" id="errorState" style="display:none;">
     <h2>Report nicht gefunden</h2>
-    <p style="color: var(--text-sec);">Dieser Link ist ungültig oder der Report existiert nicht mehr.</p>
+    <p style="color: var(--text-sec);">Dieser Link ist ungÃ¼ltig oder der Report existiert nicht mehr.</p>
   </div>
 
-  <!-- Content (hidden until loaded) -->
-  <div id="reportContent" style="display:none;">
-    <!-- Summary -->
+  <!-- Summary (hidden until loaded) -->
+  <div class="summary-section" id="summarySection" style="display:none;">
     <div class="summary-grid" id="summaryGrid"></div>
-
-    <!-- Posts -->
-    <div class="posts-section" id="postsSection"></div>
   </div>
+
+  <!-- Posts -->
+  <div class="posts-section" id="postsSection" style="display:none;"></div>
 
   <div class="report-footer">
     Erstellt von <a href="https://hashtaghamburg.de" target="_blank">Hashtag Hamburg</a>
@@ -191,25 +327,26 @@
   const params = new URLSearchParams(window.location.search);
   const token = params.get('t');
 
-  if (!token) {
-    showError();
-    return;
-  }
+  if (!token) { showError(); return; }
 
   try {
-    // 1. Load report config
     const configRes = await fetch(`/api/reports?t=${token}`);
     if (!configRes.ok) { showError(); return; }
     const configData = await configRes.json();
     if (!configData.success) { showError(); return; }
 
     const report = configData.data;
-    document.getElementById('reportTitle').textContent = `Report: ${report.clientName}`;
+    document.getElementById('reportTitle').textContent = report.clientName;
     document.getElementById('reportSubtitle').textContent =
-      `Erstellt am ${new Date(report.createdAt).toLocaleDateString('de-DE')} · ${report.posts.length} Post${report.posts.length > 1 ? 's' : ''}`;
-    document.title = `${report.clientName} — Campaign Report`;
+      `Erstellt am ${new Date(report.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}`;
+    document.title = `${report.clientName} â Campaign Report`;
 
-    // 2. Fetch insights for each post
+    const badge = document.getElementById('postCountBadge');
+    badge.style.display = 'inline-flex';
+    document.getElementById('postCountText').textContent =
+      `${report.posts.length} Post${report.posts.length > 1 ? 's' : ''} analysiert`;
+
+    // Fetch insights
     const results = [];
     for (const post of report.posts) {
       try {
@@ -223,7 +360,6 @@
           const json = await res.json();
           insightData = json.data || json;
         } else if (post.platform === 'tiktok') {
-          // TikTok API (future)
           insightData = { platform: 'tiktok', type: 'Video', insights: {}, permalink: post.url, caption: 'TikTok Video' };
         }
         if (insightData) results.push({ ...insightData, _postUrl: post.url, _platform: post.platform });
@@ -232,14 +368,12 @@
       }
     }
 
-    // 3. Render summary
     renderSummary(results);
-
-    // 4. Render posts
     renderPosts(results);
 
     document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('reportContent').style.display = 'block';
+    document.getElementById('summarySection').style.display = 'block';
+    document.getElementById('postsSection').style.display = 'block';
 
   } catch (e) {
     console.error(e);
@@ -253,7 +387,7 @@ function showError() {
 }
 
 function fmt(n) {
-  if (n === null || n === undefined) return '—';
+  if (n === null || n === undefined) return '\u2014';
   if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
   if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
   return n.toLocaleString('de-DE');
@@ -275,16 +409,17 @@ function renderSummary(results) {
   }
 
   const metrics = [
-    { value: fmt(totalReach), label: 'Reach' },
-    { value: fmt(totalInteractions || (totalLikes + totalComments + totalShares + totalSaves)), label: 'Interactions' },
-    { value: fmt(totalLikes), label: 'Likes' },
-    { value: fmt(totalComments), label: 'Comments' },
-    { value: fmt(totalShares), label: 'Shares' },
-    { value: fmt(totalSaves), label: 'Saves' },
+    { value: fmt(totalReach), label: 'Reichweite', icon: '\uD83D\uDC41\uFE0F', cls: 'reach' },
+    { value: fmt(totalInteractions || (totalLikes+totalComments+totalShares+totalSaves)), label: 'Interaktionen', icon: '\u26A1', cls: 'interactions' },
+    { value: fmt(totalLikes), label: 'Likes', icon: '\u2764\uFE0F', cls: 'likes' },
+    { value: fmt(totalComments), label: 'Kommentare', icon: '\uD83D\uDCAC', cls: 'comments' },
+    { value: fmt(totalShares), label: 'Shares', icon: '\uD83D\uDD01', cls: 'shares' },
+    { value: fmt(totalSaves), label: 'Saves', icon: '\uD83D\uDD16', cls: 'saves' },
   ];
 
   grid.innerHTML = metrics.map(m => `
     <div class="summary-card">
+      <div class="icon ${m.cls}">${m.icon}</div>
       <div class="value">${m.value}</div>
       <div class="label">${m.label}</div>
     </div>
@@ -294,10 +429,12 @@ function renderSummary(results) {
 function renderPosts(results) {
   const section = document.getElementById('postsSection');
 
-  section.innerHTML = results.map((r, idx) => {
+  let html = `<div class="section-title">Einzelne Posts <span class="line"></span></div>`;
+
+  html += results.map((r, idx) => {
     if (r.error) {
       return `<div class="post-card">
-        <div class="post-meta">
+        <div class="post-card-header">
           <span class="platform-badge ${r._platform}">${r._platform}</span>
           <span class="post-date" style="color: var(--red);">Fehler: ${r.error}</span>
         </div>
@@ -307,27 +444,26 @@ function renderPosts(results) {
     const i = r.insights || {};
     const platform = r._platform || r.platform || 'instagram';
     const caption = r.caption ? r.caption.substring(0, 200) : '';
+    const postDate = r.date ? new Date(r.date).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
 
-    let metricsHTML = '';
     const metricItems = [
-      { num: fmt(i.reach), lbl: 'Reach', hl: true },
+      { num: fmt(i.reach), lbl: 'Reichweite', hl: true },
       { num: fmt(i.likes), lbl: 'Likes' },
-      { num: fmt(i.comments), lbl: 'Comments' },
+      { num: fmt(i.comments), lbl: 'Kommentare' },
       { num: fmt(i.shares), lbl: 'Shares' },
       { num: fmt(i.saves), lbl: 'Saves' },
-      { num: fmt(i.totalInteractions), lbl: 'Total' },
+      { num: fmt(i.totalInteractions), lbl: 'Gesamt' },
     ];
 
-    // Add reel-specific metrics
     if (i.avgWatchTime) {
-      metricItems.push({ num: (i.avgWatchTime / 1000).toFixed(1) + 's', lbl: 'Avg Watch' });
+      metricItems.push({ num: (i.avgWatchTime / 1000).toFixed(1) + 's', lbl: 'Avg. Watch' });
     }
     if (i.totalWatchTime) {
       const hours = (i.totalWatchTime / 1000 / 3600).toFixed(1);
       metricItems.push({ num: hours + 'h', lbl: 'Watch Time' });
     }
 
-    metricsHTML = metricItems.map(m =>
+    const metricsHTML = metricItems.map(m =>
       `<div class="metric${m.hl ? ' highlight' : ''}">
         <div class="num">${m.num}</div>
         <div class="lbl">${m.lbl}</div>
@@ -335,16 +471,24 @@ function renderPosts(results) {
     ).join('');
 
     return `<div class="post-card">
-      <div class="post-meta">
+      <div class="post-card-header">
         <span class="platform-badge ${platform}">${platform}</span>
-        <span class="post-type">${r.type || 'Post'}</span>
-        <span class="post-date">${r.date || ''}</span>
+        <span class="post-type-tag">${r.type || 'Post'}</span>
+        <span class="post-date">${postDate}</span>
       </div>
-      ${caption ? `<div class="post-caption">${caption}</div>` : ''}
-      <div class="metrics-grid">${metricsHTML}</div>
-      ${r.permalink ? `<a class="post-link" href="${r.permalink}" target="_blank">Post ansehen →</a>` : ''}
+      <div class="post-card-body">
+        ${caption ? `<div class="post-caption">${caption}</div>` : ''}
+        <div class="metrics-grid">${metricsHTML}</div>
+      </div>
+      ${r.permalink ? `<div class="post-card-footer">
+        <a class="post-link" href="${r.permalink}" target="_blank">
+          Post ansehen <span class="arrow">\u2192</span>
+        </a>
+      </div>` : ''}
     </div>`;
   }).join('');
+
+  section.innerHTML = html;
 }
 </script>
 </body>
