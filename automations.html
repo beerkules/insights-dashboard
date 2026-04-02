@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Hashtag Hamburg — Automations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #111111; --bg-card: #1a1a1a; --bg-input: #1e1e1e;
+    --blue: #38B6FF; --blue-dark: #1A8FCC; --blue-glow: rgba(56,182,255,0.25);
+    --green: #34D399; --pink: #F472B6; --red: #F87171;
+    --yellow: #FBBF24; --orange: #FB923C; --purple: #A78BFA;
+    --text: #ffffff; --text-sec: #aaaaaa; --text-muted: #555555;
+    --border: rgba(255,255,255,0.08); --border-light: rgba(255,255,255,0.12);
+    --radius: 16px; --radius-sm: 10px; --radius-xs: 6px;
+  }
+
+  html.light {
+    --bg: #f5f5f7; --bg-card: #ffffff; --bg-input: #f0f0f2;
+    --blue: #1A8FCC; --blue-dark: #1574A8; --blue-glow: rgba(26,143,204,0.2);
+    --green: #16a34a; --pink: #db2777; --red: #dc2626;
+    --yellow: #d97706; --orange: #ea580c; --purple: #7c3aed;
+    --text: #111111; --text-sec: #555555; --text-muted: #999999;
+    --border: rgba(0,0,0,0.08); --border-light: rgba(0,0,0,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+
+  html.light .nav-logo, html.light .login-logo { content: url('logo-dark.svg'); }
+
+  /* ═══ LOGIN ═══ */
+  .login-screen {
+    display: flex; align-items: center; justify-content: center; min-height: 100vh;
+    background: radial-gradient(ellipse at 30% 20%, rgba(56,182,255,0.07) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 70%, rgba(56,182,255,0.04) 0%, transparent 50%), var(--bg);
+  }
+  html.light .login-screen {
+    background: radial-gradient(ellipse at 30% 20%, rgba(26,143,204,0.06) 0%, transparent 50%), var(--bg);
+  }
+
+  .login-box {
+    width: 100%; max-width: 400px; padding: 48px 40px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); text-align: center;
+  }
+  html.light .login-box { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+
+  .login-logo { width: 200px; margin: 0 auto 32px; display: block; }
+  .login-title {
+    font-size: 14px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text-sec); margin-bottom: 32px;
+  }
+  .login-input {
+    width: 100%; padding: 14px 18px; background: var(--bg-input);
+    border: 1px solid var(--border-light); border-radius: var(--radius-sm);
+    color: var(--text); font-family: inherit; font-size: 15px; font-weight: 500;
+    letter-spacing: 4px; text-align: center; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .login-input::placeholder { letter-spacing: 1px; color: var(--text-muted); font-weight: 400; }
+  .login-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow); }
+  .login-error { margin-top: 16px; color: var(--red); font-size: 13px; font-weight: 500; display: none; }
+  .login-error.visible { display: block; }
+
+  /* ═══ NAV ═══ */
+  .nav {
+    position: sticky; top: 0; z-index: 100; height: 60px; padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+  }
+  .nav-left { display: flex; align-items: center; gap: 20px; }
+  .nav-logo { height: 22px; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-link {
+    font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 1px; text-decoration: none; transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--text); }
+  .nav-link.active { color: var(--blue); }
+  .nav-sep { width: 1px; height: 20px; background: var(--border); }
+  .nav-logout {
+    font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 1px; cursor: pointer; transition: color 0.2s; background: none;
+    border: none; font-family: inherit;
+  }
+  .nav-logout:hover { color: var(--text); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: var(--radius-xs);
+    width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-muted); transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-light); color: var(--text-sec); }
+  .theme-toggle svg { width: 16px; height: 16px; }
+
+  /* ═══ LAYOUT ═══ */
+  .admin { display: none; flex-direction: column; min-height: 100vh; }
+  .admin.active { display: flex; }
+  .login-screen.hidden { display: none; }
+  .main { max-width: 960px; width: 100%; margin: 0 auto; padding: 40px 32px 80px; }
+
+  /* ═══ HEADINGS ═══ */
+  .page-header { margin-bottom: 32px; }
+  .page-title { font-size: 24px; font-weight: 800; }
+  .page-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ═══ STATS ROW ═══ */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 24px; text-align: center;
+  }
+  .stat-number { font-size: 32px; font-weight: 800; color: var(--blue); }
+  .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ═══ FILTER TABS ═══ */
+  .filter-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .filter-tab {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s;
+    background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sec);
+  }
+  .filter-tab:hover { border-color: var(--border-light); }
+  .filter-tab.active { border-color: var(--blue); background: rgba(56,182,255,0.08); color: var(--blue); }
+
+  /* ═══ AUTOMATION CARDS ═══ */
+  .auto-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .auto-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 24px; transition: border-color 0.2s;
+  }
+  .auto-card:hover { border-color: var(--border-light); }
+
+  .auto-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .auto-icon {
+    width: 36px; height: 36px; border-radius: var(--radius-xs); display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px;
+  }
+  .auto-icon.zapier { background: rgba(255,74,39,0.12); }
+  .auto-icon.cloudflare { background: rgba(56,182,255,0.12); }
+  .auto-icon.python { background: rgba(52,211,153,0.12); }
+
+  .auto-title-row { flex: 1; min-width: 0; }
+  .auto-title { font-size: 15px; font-weight: 700; }
+  .auto-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .auto-badges { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+
+  .badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 4px;
+  }
+  .badge.active { background: rgba(52,211,153,0.12); color: var(--green); }
+  .badge.inactive { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+  .badge.zapier { background: rgba(255,74,39,0.1); color: #ff4a27; }
+  html.light .badge.zapier { color: #e63600; }
+  .badge.server { background: rgba(56,182,255,0.1); color: var(--blue); }
+  .badge.python { background: rgba(52,211,153,0.1); color: var(--green); }
+  .badge.subzap { background: rgba(167,139,250,0.1); color: var(--purple); }
+
+  .auto-desc {
+    font-size: 13px; color: var(--text-sec); line-height: 1.5; margin-bottom: 10px;
+  }
+
+  .auto-flow {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    font-size: 11px; color: var(--text-muted);
+  }
+  .flow-step {
+    background: var(--bg-input); border: 1px solid var(--border); border-radius: 4px;
+    padding: 3px 8px; font-weight: 500;
+  }
+  .flow-arrow { color: var(--text-muted); font-size: 14px; }
+
+  /* ═══ SECTION DIVIDER ═══ */
+  .section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-muted); margin: 32px 0 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 768px) {
+    .nav { padding: 0 16px; }
+    .main { padding: 24px 16px 60px; }
+    .stats-row { grid-template-columns: 1fr; }
+    .page-title { font-size: 20px; }
+    .login-box { margin: 20px; padding: 36px 24px; }
+    .auto-header { flex-wrap: wrap; }
+    .auto-badges { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <img src="logo.svg" alt="Hashtag Hamburg" class="login-logo">
+    <div class="login-title">Automations</div>
+    <form onsubmit="return handleLogin(event)">
+      <input type="password" class="login-input" id="loginCode" placeholder="Admin-Code eingeben" autocomplete="off" autofocus>
+      <button type="submit" style="width:100%;margin-top:16px;padding:14px;font-size:14px;letter-spacing:1px;text-transform:uppercase;background:var(--blue);color:#000;border:none;border-radius:var(--radius-xs);font-family:inherit;font-weight:600;cursor:pointer;">Anmelden</button>
+    </form>
+    <div class="login-error" id="loginError">Ungültiger Admin-Code</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin" id="admin">
+  <nav class="nav">
+    <div class="nav-left">
+      <img src="logo.svg" alt="Hashtag Hamburg" class="nav-logo">
+      <div class="nav-sep"></div>
+      <a href="admin.html" class="nav-link">Kunden</a>
+      <a href="automations.html" class="nav-link active">Automations</a>
+    </div>
+    <div class="nav-right">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <svg id="themeIconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <button class="nav-logout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="main" id="mainContent"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  AUTOMATIONS DATA
+// ═══════════════════════════════════════════════════════════════
+const AUTOMATIONS = [
+  // ── Eigener Server (Cloudflare Functions) ──
+  {
+    id: 'deal-won-webhook',
+    name: 'Deal Won → Status "Kunde" & Telegram',
+    desc: 'Wenn eine Opportunity in Close auf "Won" wechselt, wird der Lead-Status automatisch auf "Kunde" gesetzt und eine Telegram-Benachrichtigung gesendet.',
+    platform: 'server',
+    status: 'active',
+    category: 'crm',
+    flow: ['Close CRM (Webhook)', 'Cloudflare Function', 'Close API Update', 'Telegram Bot'],
+    endpoint: '/api/deal-won',
+    envVars: ['CLOSE_API_KEY', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID'],
+  },
+  {
+    id: 'insights-api',
+    name: 'Instagram Insights API',
+    desc: 'Ruft Instagram Post-Insights (Reach, Likes, Shares, Saves etc.) über die Meta Graph API ab. Wird vom Campaign Dashboard genutzt.',
+    platform: 'server',
+    status: 'active',
+    category: 'social',
+    flow: ['Dashboard Frontend', 'Cloudflare Function', 'Meta Graph API'],
+    endpoint: '/api/insights',
+    envVars: ['META_PAGE_TOKEN', 'IG_ACCOUNT_ID'],
+  },
+  {
+    id: 'extract-api',
+    name: 'Screenshot Insights Extraktor (AI)',
+    desc: 'Analysiert hochgeladene Instagram/TikTok Insight-Screenshots mit Claude AI und extrahiert alle Metriken als strukturierte Daten.',
+    platform: 'server',
+    status: 'active',
+    category: 'social',
+    flow: ['Admin Panel Upload', 'Cloudflare Function', 'Claude API', 'JSON Response'],
+    endpoint: '/api/extract',
+    envVars: ['ANTHROPIC_API_KEY'],
+  },
+
+  // ── Python (eigener Server) ──
+  {
+    id: 'tiktok-spark-ads',
+    name: 'TikTok Spark Ads Automation',
+    desc: 'Überwacht den TikTok Business Account auf neue Posts und erstellt automatisch Spark Ad Kampagnen mit €100 Budget über 5 Tage. Läuft als Cron-Job oder Webhook.',
+    platform: 'python',
+    status: 'active',
+    category: 'ads',
+    flow: ['TikTok Webhook / Cron', 'Python Script', 'TikTok Marketing API', 'E-Mail Notification'],
+    endpoint: '/webhook/tiktok',
+    envVars: ['TIKTOK_ACCESS_TOKEN', 'TIKTOK_ADVERTISER_ID', 'TIKTOK_APP_SECRET'],
+  },
+
+  // ── Zapier Automations ──
+  {
+    id: 'calendly-erstgespraech',
+    name: 'Calendly (Erstgespräch) → Close',
+    desc: 'Erstellt einen neuen Lead in Close wenn ein Erstgespräch über Calendly gebucht wird. Überträgt Kontaktdaten und Termindetails.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Calendly Trigger', 'Close CRM (Create Lead)'],
+  },
+  {
+    id: 'calendly-benjamin',
+    name: 'Calendly (Erstgespräch Benjamin) → Close',
+    desc: 'Wie Erstgespräch-Zap, spezifisch für Benjamins Calendly-Link.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Calendly Trigger', 'Close CRM (Create Lead)'],
+  },
+  {
+    id: 'calendly-sebastian',
+    name: 'Calendly (Erstgespräch Sebastian) → Close',
+    desc: 'Wie Erstgespräch-Zap, spezifisch für Sebastians Calendly-Link.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Calendly Trigger', 'Close CRM (Create Lead)'],
+  },
+  {
+    id: 'calendly-moritz',
+    name: 'Calendly (Erstgespräch Moritz) → Close',
+    desc: 'Wie Erstgespräch-Zap, spezifisch für Moritz\' Calendly-Link.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Calendly Trigger', 'Close CRM (Create Lead)'],
+  },
+  {
+    id: 'calendly-coldcall',
+    name: 'Calendly (Erstgespräch nach Coldcall) → Close',
+    desc: 'Lead-Erstellung nach Calendly-Buchung, die aus einem Coldcall resultiert.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Calendly Trigger', 'Close CRM (Create Lead)'],
+  },
+  {
+    id: 'calendly-beratung-benjamin',
+    name: 'Calendly Beratungsgespräch Benjamin → Close',
+    desc: 'Trackt Beratungsgespräch-Buchungen über Benjamins Calendly und aktualisiert den Lead in Close.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Calendly Trigger', 'Close CRM'],
+  },
+  {
+    id: 'calendly-roundrobin',
+    name: 'Calendly (Erstgespräch/Direct Closing RoundRobin) → Close',
+    desc: 'Round-Robin Terminverteilung für Erstgespräche und Direct Closings. Erstellt Lead in Close.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Calendly Trigger', 'Close CRM (Create Lead)'],
+  },
+  {
+    id: 'subzap-create-lead',
+    name: '(SubZap) Create A Lead in Close',
+    desc: 'Wiederverwendbarer Sub-Zap für die Lead-Erstellung in Close. Wird von mehreren Calendly-Zaps aufgerufen.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    isSubZap: true,
+    flow: ['Sub-Zap Trigger', 'Close CRM (Create Lead)'],
+  },
+  {
+    id: 'subzap-neuer-termin',
+    name: '(SubZap) Neuer Termin Kennenlerngespräch',
+    desc: 'Sub-Zap für Benachrichtigungen und CRM-Updates bei neuen Kennenlerngespräch-Terminen.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    isSubZap: true,
+    flow: ['Sub-Zap Trigger', 'Close CRM'],
+  },
+  {
+    id: 'webseite-leadformular',
+    name: 'Webseite Leadformular → Close',
+    desc: 'Leads die über das Kontaktformular auf hashtaghamburg.de eingehen werden automatisch in Close angelegt.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Webhook (Formular)', 'Close CRM (Create Lead)'],
+  },
+  {
+    id: 'neueroeffnungen-import',
+    name: 'Neueröffnungen Import',
+    desc: 'Importiert neue Geschäftseröffnungen als Leads in Close für Outbound-Prospecting.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'crm',
+    flow: ['Datenquelle', 'Mehrere Steps', 'Close CRM'],
+  },
+  {
+    id: 'screenshot-hamburg',
+    name: 'Screenshot #Hamburg → Close',
+    desc: 'Erfasst Instagram-Posts mit dem Hashtag #Hamburg und legt relevante Accounts als Leads in Close an.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'social',
+    flow: ['Instagram Monitor', 'Mehrere Steps', 'Close CRM'],
+  },
+  {
+    id: 'screenshot-hashtaghamburg',
+    name: 'Screenshot #hashtaghamburg.de → Close',
+    desc: 'Erfasst Mentions von hashtaghamburg.de auf Social Media und erstellt Leads in Close.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'social',
+    flow: ['Social Monitor', 'Close CRM'],
+  },
+  {
+    id: 'outbound-instagram',
+    name: 'Outbound Instagram Lead → Colddms',
+    desc: 'Sendet automatische Instagram-DMs an neue Outbound-Leads zur Erstansprache.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'outbound',
+    flow: ['Close CRM Trigger', 'Instagram DM'],
+  },
+  {
+    id: 'dialfire-coldcallings',
+    name: 'Dialfire Coldcallings → Close',
+    desc: 'Synchronisiert Coldcall-Ergebnisse aus Dialfire zurück nach Close CRM.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'outbound',
+    flow: ['Dialfire Trigger', 'Close CRM'],
+  },
+  {
+    id: 'dialfire-mail',
+    name: 'Dialfire Mail Gewünscht → Close',
+    desc: 'Wenn ein Coldcall-Kontakt in Dialfire "Mail gewünscht" markiert wird, wird der Lead in Close aktualisiert.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'outbound',
+    flow: ['Dialfire Trigger', 'Close CRM (Update)'],
+  },
+  {
+    id: 'angebot-lexoffice',
+    name: 'Angebot aus Close → Lexoffice → Close',
+    desc: 'Erstellt automatisch ein Angebot in Lexoffice wenn ein Deal in Close eine bestimmte Phase erreicht und verlinkt es zurück.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'billing',
+    flow: ['Close CRM Trigger', 'Lexoffice (Angebot)', 'Close CRM (Update)'],
+  },
+  {
+    id: 'weekly-reminder',
+    name: 'Weekly Reminder - Salesteam',
+    desc: 'Sendet wöchentliche Erinnerungen an das Sales-Team mit offenen Tasks und Pipeline-Updates.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'internal',
+    flow: ['Schedule (Wöchentlich)', 'Notification'],
+  },
+  {
+    id: 'typeform-moodboard',
+    name: 'Typeform Moodboard → Gmail',
+    desc: 'Leitet ausgefüllte Moodboard-Fragebögen (Typeform) per E-Mail an das Team weiter.',
+    platform: 'zapier',
+    status: 'active',
+    category: 'internal',
+    flow: ['Typeform Trigger', 'Gmail (Send)'],
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  CATEGORIES
+// ═══════════════════════════════════════════════════════════════
+const CATEGORIES = {
+  all: 'Alle',
+  crm: 'CRM / Leads',
+  social: 'Social Media',
+  ads: 'Ads / Kampagnen',
+  outbound: 'Outbound',
+  billing: 'Billing',
+  internal: 'Intern',
+};
+
+const PLATFORMS = {
+  all: 'Alle Plattformen',
+  server: 'Eigener Server',
+  zapier: 'Zapier',
+  python: 'Python',
+};
+
+let currentCategory = 'all';
+let currentPlatform = 'all';
+
+// ═══════════════════════════════════════════════════════════════
+//  THEME
+// ═══════════════════════════════════════════════════════════════
+function applyTheme(t) {
+  document.documentElement.classList.toggle('light', t === 'light');
+  document.getElementById('themeIconSun').style.display = t === 'dark' ? '' : 'none';
+  document.getElementById('themeIconMoon').style.display = t === 'light' ? '' : 'none';
+}
+function toggleTheme() {
+  const next = document.documentElement.classList.contains('light') ? 'dark' : 'light';
+  localStorage.setItem('hh-theme', next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem('hh-theme') || 'light');
+
+// ═══════════════════════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════════════════════
+function handleLogin(e) {
+  e.preventDefault();
+  if (document.getElementById('loginCode').value === 'tipico00') {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('admin').classList.add('active');
+    render();
+  } else {
+    const err = document.getElementById('loginError');
+    err.classList.add('visible');
+    setTimeout(() => err.classList.remove('visible'), 3000);
+  }
+  return false;
+}
+
+function logout() {
+  document.getElementById('admin').classList.remove('active');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginCode').value = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════════════
+function getFiltered() {
+  return AUTOMATIONS.filter(a => {
+    if (currentCategory !== 'all' && a.category !== currentCategory) return false;
+    if (currentPlatform !== 'all' && a.platform !== currentPlatform) return false;
+    return true;
+  });
+}
+
+function platformIcon(p) {
+  if (p === 'zapier') return '<span class="auto-icon zapier">⚡</span>';
+  if (p === 'server') return '<span class="auto-icon cloudflare">☁️</span>';
+  if (p === 'python') return '<span class="auto-icon python">🐍</span>';
+  return '';
+}
+
+function platformBadge(p) {
+  if (p === 'zapier') return '<span class="badge zapier">Zapier</span>';
+  if (p === 'server') return '<span class="badge server">Eigener Server</span>';
+  if (p === 'python') return '<span class="badge python">Python</span>';
+  return '';
+}
+
+function renderCard(a) {
+  const flowHtml = a.flow ? a.flow.map(s =>
+    `<span class="flow-step">${s}</span>`
+  ).join('<span class="flow-arrow">→</span>') : '';
+
+  const envHtml = a.envVars ? `<span>Env: ${a.envVars.length} Vars</span>` : '';
+  const endpointHtml = a.endpoint ? `<span>Endpoint: <code style="font-size:11px;background:var(--bg-input);padding:1px 5px;border-radius:3px;">${a.endpoint}</code></span>` : '';
+
+  return `
+    <div class="auto-card">
+      <div class="auto-header">
+        ${platformIcon(a.platform)}
+        <div class="auto-title-row">
+          <div class="auto-title">${a.name}</div>
+          <div class="auto-meta">
+            ${endpointHtml}
+            ${envHtml}
+          </div>
+        </div>
+        <div class="auto-badges">
+          <span class="badge ${a.status === 'active' ? 'active' : 'inactive'}">${a.status === 'active' ? 'Aktiv' : 'Inaktiv'}</span>
+          ${platformBadge(a.platform)}
+          ${a.isSubZap ? '<span class="badge subzap">Sub-Zap</span>' : ''}
+        </div>
+      </div>
+      <div class="auto-desc">${a.desc}</div>
+      <div class="auto-flow">${flowHtml}</div>
+    </div>
+  `;
+}
+
+function render() {
+  const main = document.getElementById('mainContent');
+  const filtered = getFiltered();
+
+  const serverCount = AUTOMATIONS.filter(a => a.platform === 'server' || a.platform === 'python').length;
+  const zapierCount = AUTOMATIONS.filter(a => a.platform === 'zapier').length;
+  const activeCount = AUTOMATIONS.filter(a => a.status === 'active').length;
+
+  // Group by platform
+  const serverAutos = filtered.filter(a => a.platform === 'server' || a.platform === 'python');
+  const zapierAutos = filtered.filter(a => a.platform === 'zapier' && !a.isSubZap);
+  const subZaps = filtered.filter(a => a.isSubZap);
+
+  main.innerHTML = `
+    <div class="page-header">
+      <div class="page-title">Automations</div>
+      <div class="page-sub">${AUTOMATIONS.length} Automatisierungen verwalten eure Prozesse</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">${AUTOMATIONS.length}</div>
+        <div class="stat-label">Gesamt</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:var(--green);">${serverCount}</div>
+        <div class="stat-label">Eigener Server</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:#ff4a27;">${zapierCount}</div>
+        <div class="stat-label">Zapier</div>
+      </div>
+    </div>
+
+    <div class="filter-tabs">
+      ${Object.entries(CATEGORIES).map(([key, label]) =>
+        `<div class="filter-tab ${currentCategory === key ? 'active' : ''}" onclick="setCategory('${key}')">${label}</div>`
+      ).join('')}
+    </div>
+
+    <div class="filter-tabs" style="margin-top:-16px;">
+      ${Object.entries(PLATFORMS).map(([key, label]) =>
+        `<div class="filter-tab ${currentPlatform === key ? 'active' : ''}" onclick="setPlatform('${key}')">${label}</div>`
+      ).join('')}
+    </div>
+
+    ${serverAutos.length > 0 ? `
+      <div class="section-title">Eigener Server / Cloudflare Functions</div>
+      <div class="auto-list">${serverAutos.map(renderCard).join('')}</div>
+    ` : ''}
+
+    ${zapierAutos.length > 0 ? `
+      <div class="section-title">Zapier Automations</div>
+      <div class="auto-list">${zapierAutos.map(renderCard).join('')}</div>
+    ` : ''}
+
+    ${subZaps.length > 0 ? `
+      <div class="section-title">Sub-Zaps (wiederverwendbar)</div>
+      <div class="auto-list">${subZaps.map(renderCard).join('')}</div>
+    ` : ''}
+
+    ${filtered.length === 0 ? '<div style="text-align:center;padding:48px;color:var(--text-muted);font-size:14px;">Keine Automatisierungen in dieser Kategorie.</div>' : ''}
+  `;
+}
+
+function setCategory(c) { currentCategory = c; render(); }
+function setPlatform(p) { currentPlatform = p; render(); }
+</script>
+</body>
+</html>
