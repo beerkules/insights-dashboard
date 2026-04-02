@@ -1,5 +1,5 @@
 /**
- * Instagram Insights API — Cloudflare Function
+ * Instagram Insights API â Cloudflare Function
  *
  * Fetches Instagram post insights via the Graph API.
  *
@@ -11,7 +11,7 @@
  *   POST /api/insights
  *   Body: { "url": "https://www.instagram.com/reel/..." }
  *     or: { "mediaId": "17856455493628105" }
- *     or: { "latest": 5 }  — fetch insights for the N most recent posts
+ *     or: { "latest": 5 }  â fetch isights for the N most recent posts
  */
 
 const GRAPH_API = 'https://graph.facebook.com/v25.0';
@@ -31,7 +31,7 @@ const METRICS = {
 
 async function graphGet(path, token) {
   const sep = path.includes('?') ? '&' : '?';
-  const url = `${GRAPH_API}/${path}${sep}access_token=${token}`;
+  const url = `${GRAPH_API}/${path}${sep}PLACEHOLDER_TKN=${token}`;
   const res = await fetch(url);
   const data = await res.json();
   if (data.error) throw new Error(`Graph API: ${data.error.message}`);
@@ -71,7 +71,7 @@ async function findMediaByPermalink(igAccountId, permalink, token) {
         return media.id;
       }
     }
-    url = data.paging?.next?.replace(`${GRAPH_API}/`, '').replace(`access_token=${token}`, '').replace(/[&?]$/, '');
+    url = data.paging?.next?.replace(`${GRAPH_API}/`, '').replace(`PLACEHOLDER_TKN=${token}`, '').replace(/[&?]$/, '');
     if (data.paging?.next) {
       // Use the full next URL
       const nextRes = await fetch(data.paging.next);
@@ -101,7 +101,7 @@ async function findMediaByPermalink(igAccountId, permalink, token) {
 async function getMediaInsights(mediaId, token) {
   // First get media info (type, caption, permalink, timestamp)
   const mediaInfo = await graphGet(
-    `${mediaId}?fields=media_type,media_product_type,caption,permalink,timestamp,like_count,comments_count`,
+    `${mediaId}?fields=media_type,media_product_type,caption,permalink,timestamp,like_count,comments_count,thumbnail_url,media_url`,
     token
   );
 
@@ -148,6 +148,7 @@ async function getMediaInsights(mediaId, token) {
     date: mediaInfo.timestamp ? mediaInfo.timestamp.split('T')[0] : null,
     caption: mediaInfo.caption || null,
     permalink: mediaInfo.permalink || null,
+    thumbnailUrl: mediaInfo.thumbnail_url || mediaInfo.media_url || null,
     insights: {
       reach: insights.reach ?? null,
       likes: insights.likes ?? mediaInfo.like_count ?? null,
