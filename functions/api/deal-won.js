@@ -79,22 +79,49 @@ export async function onRequestPost(context) {
     const payload = await context.request.json();
 
     // ── Extract opportunity data from Close webhook ──
-    // Close sends: { event: { ... }, data: { ... } }
+    // Close sends: { event: { object_type, action, ... }, data: { ... } }
     const event = payload.event || {};
     const data = payload.data || payload;
 
-    // Support both Close webhook formats
+    // ── FILTER: Only proceed if opportunity status changed to "Won" ──
+    // Close webhook payload has data.status_label or data.new_status_label
     const opportunityId = data.id || data.opportunity_id || event.data?.id || '';
-    const leadId = data.lead_id || event.data?.lead_id || '';
-    const opportunityValue = data.value || data.annualized_value || event.data?.value || 0;
-    const opportunityNote = data.note || event.data?.note || '';
+    const statusLabel = data.status_label || data.new_status_label || '';
+    const statusType = data.status_type || data.new_status_type || '';
+
+    // Fetch the opportunity to check its current status if not in payload
+    let opp = null;
+    if (opportunityId && !statusLabel) {
+      opp = await closeAPI('GET', `opportunity/${opportunityId}`, CLOSE_API_KEY);
+    }
+
+    const resolvedStatusLabel = statusLabel || (opp && opp.status_label) || '';
+    const resolvedStatusType = statusType || (opp && opp.status_type) || '';
+
+    // Only fire on "Won" status — ignore all other changes
+    const isWon = resolvedStatusType === 'won'
+      || resolvedStatusLabel.toLowerCase().includes('won')
+      || resolvedStatusLabel.toLowerCase().includes('angenommen');
+
+    if (!isWon) {
+      return new Response(JSON.stringify({
+        skipped: true,
+        reason: `Status "${resolvedStatusLabel}" (type: ${resolvedStatusType}) is not Won`,
+      }), { status: 200, headers: corsHeaders });
+    }
+
+    const leadId = data.lead_id || event.data?.lead_id || (opp && opp.lead_id) || '';
+    const opportunityValue = data.value || data.annualized_value || (opp && opp.value) || 0;
+    const opportunityNote = data.note || (opp && opp.note) || '';
     const contactName = data.contact_name || data.lead_name || '';
-    const statusLabel = data.status_label || data.new_status_label || 'Won';
 
     if (!leadId) {
-      // Try to get lead_id from the opportunity if not in payload
-      if (opportunityId) {
-        const opp = await closeAPI('GET', `opportunity/${opportunityId}`, CLOSE_API_KEY);
+      if (opportunityId && !opp) {
+        opp = await closeAPI('GET', `opportunity/${opportunityId}`, CLOSE_API_KEY);
+        var resolvedLeadId = opp.lead_id;
+        var resolvedValue = opp.value || opp.annualized_value || opportunityValue;
+        var resolvedNote = opp.note || opportunityNote;
+      } else if (opp) {
         var resolvedLeadId = opp.lead_id;
         var resolvedValue = opp.value || opp.annualized_value || opportunityValue;
         var resolvedNote = opp.note || opportunityNote;
@@ -123,6 +150,8 @@ export async function onRequestPost(context) {
     }
 
     const leadName = leadInfo.display_name || contactName || 'Unbekannt';
+    // Custom Field "Quelle" in Close CRM
+    const leadSource = leadInfo['custom.cf_V6HRCPxKnerOXkYojfnQ23DBFN0HVC9eisclazlw2OL'] || '';
 
     // Get all lead statuses to find "Kunde"
     const statuses = await closeAPI('GET', 'status/lead/', CLOSE_API_KEY);
@@ -148,11 +177,10 @@ export async function onRequestPost(context) {
       `🎉 <b>Neuer Abschluss!</b>`,
       ``,
       `<b>Kunde:</b> ${leadName}`,
-      finalValue ? `<b>Wert:</b> ${valueFormatted}` : null,
-      finalNote ? `<b>Notiz:</b> ${finalNote}` : null,
-      `<b>Status:</b> ${statusLabel} → Kunde`,
+      finalValue ? `<b>Preis:</b> ${valueFormatted}` : null,
+      leadSource ? `<b>Quelle:</b> ${leadSource}` : null,
       ``,
-      `<a href="https://app.close.com/lead/${finalLeadId}/">In Close öffnen</a>`,
+      `<a href="https://app.close.com/lead/${finalLeadId}/">→ In Close öffnen</a>`,
     ].filter(Boolean).join('\n');
 
     await sendTelegram(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message);
