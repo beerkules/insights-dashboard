@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Campaign Report â Hashtag Hamburg</title>
+<title>Campaign Report - Hashtag Hamburg</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,236 +13,199 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
+    --black: #000000;
+    --white: #FFFFFF;
     --blue: #38B6FF;
     --blue-dark: #1A8FCC;
-    --blue-soft: #EBF7FF;
-    --blue-mid: #D0EFFF;
-    --green: #10B981;
-    --green-soft: #ECFDF5;
-    --pink: #EC4899;
-    --red: #EF4444;
-    --orange: #F59E0B;
-    --tiktok: #ff0050;
-    --ig-gradient: linear-gradient(135deg, #833AB4, #E1306C, #F77737);
-    --bg: #F8FAFC;
-    --bg-white: #FFFFFF;
-    --text: #1E293B;
-    --text-sec: #64748B;
-    --text-muted: #94A3B8;
-    --border: #E2E8F0;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
-    --shadow-lg: 0 10px 30px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
-    --radius: 20px;
-    --radius-sm: 14px;
+    --blue-light: #D6EEFF;
+    --anthrazit: #111111;
+    --grau: #888888;
+    --hellgrau: #F2F2F2;
+    --border: #E5E5E5;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+    --radius: 16px;
+    --radius-sm: 12px;
     --radius-xs: 8px;
   }
 
   body {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    background: var(--white);
+    color: var(--anthrazit);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
 
-  /* Hero Header */
+  /* Hero - Black background per Brand Guidelines */
   .hero {
-    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%);
-    padding: 48px 24px 64px;
+    background: var(--black);
+    padding: 48px 24px 56px;
     text-align: center;
     position: relative;
-    overflow: hidden;
   }
-  .hero::before {
+  .hero::after {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -25%;
-    width: 150%;
-    height: 200%;
-    background: radial-gradient(ellipse at 30% 50%, rgba(56,182,255,0.15) 0%, transparent 60%),
-                radial-gradient(ellipse at 70% 30%, rgba(236,72,153,0.1) 0%, transparent 50%);
-    pointer-events: none;
+    bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 3px;
+    background: var(--blue);
+    border-radius: 2px;
   }
-  .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
-  .hero img { width: 160px; margin-bottom: 28px; filter: brightness(10); }
+  .hero-content { position: relative; max-width: 700px; margin: 0 auto; }
+  .hero img { width: 140px; margin-bottom: 32px; filter: brightness(10); }
   .hero h1 {
-    font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 8px;
-    letter-spacing: -0.5px;
+    font-size: 28px; font-weight: 800; color: var(--white);
+    letter-spacing: -0.5px; line-height: 1.2;
   }
   .hero .subtitle {
-    font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 400;
+    font-size: 13px; color: var(--grau); font-weight: 400; margin-top: 8px;
   }
-  .hero .post-count-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(56,182,255,0.2); border: 1px solid rgba(56,182,255,0.3);
-    color: var(--blue); font-size: 12px; font-weight: 600;
-    padding: 6px 16px; border-radius: 50px; margin-top: 16px;
-    backdrop-filter: blur(8px);
+  .hero .post-count {
+    display: inline-block;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; color: var(--blue);
+    margin-top: 20px;
   }
 
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
-  /* Summary Cards â pulled up over hero */
-  .summary-section {
-    margin-top: -36px;
-    position: relative;
-    z-index: 2;
-    padding-bottom: 32px;
-  }
+  /* Summary Strip */
+  .summary-section { padding: 48px 0 40px; }
   .summary-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
   }
   .summary-card {
-    background: var(--bg-white);
-    border-radius: var(--radius-sm);
-    padding: 24px 20px;
+    background: var(--white);
+    padding: 28px 20px;
     text-align: center;
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border);
-    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .summary-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
-  .summary-card .icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 12px; font-size: 20px;
-  }
-  .summary-card .icon.reach { background: var(--blue-soft); }
-  .summary-card .icon.interactions { background: #FEF3C7; }
-  .summary-card .icon.likes { background: #FDE7F3; }
-  .summary-card .icon.comments { background: #E0E7FF; }
-  .summary-card .icon.shares { background: var(--green-soft); }
-  .summary-card .icon.saves { background: #FFF7ED; }
   .summary-card .value {
-    font-size: 30px; font-weight: 800; color: var(--text);
+    font-size: 32px; font-weight: 800; color: var(--anthrazit);
     letter-spacing: -0.5px;
   }
   .summary-card .label {
-    font-size: 11px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 1.5px; color: var(--text-muted); margin-top: 2px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--grau); margin-top: 4px;
   }
+  .summary-card.highlight .value { color: var(--blue-dark); }
 
-  /* Posts Section */
-  .posts-section {
-    padding-bottom: 40px;
+  /* Section Divider */
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 24px; padding-bottom: 12px;
+    border-bottom: 2px solid var(--black);
   }
-  .section-title {
-    font-size: 18px; font-weight: 700; color: var(--text);
-    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  .section-header h2 {
+    font-size: 14px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--anthrazit);
   }
-  .section-title .line {
-    flex: 1; height: 1px; background: var(--border);
-  }
-
-  /* Platform Badge */
-  .platform-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.8px; padding: 5px 12px; border-radius: 50px;
-    color: #fff;
-  }
-  .platform-badge.instagram { background: var(--ig-gradient); }
-  .platform-badge.tiktok { background: var(--tiktok); }
 
   /* Post Card */
   .post-card {
-    background: var(--bg-white);
+    background: var(--white);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 0;
     margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
     overflow: hidden;
-    transition: box-shadow 0.2s, transform 0.2s;
+    transition: box-shadow 0.2s;
   }
-  .post-card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+  .post-card:hover { box-shadow: var(--shadow-lg); }
+
+  .post-card-top {
+    display: flex; gap: 0;
   }
 
-  .post-card-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 20px 24px; border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
+  /* Thumbnail */
+  .post-thumb {
+    width: 200px; min-height: 200px;
+    background: var(--hellgrau);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
   }
-  .post-type-tag {
+  .post-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .post-thumb .platform-tag {
+    position: absolute; top: 12px; left: 12px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; padding: 4px 10px; border-radius: 4px;
+    color: var(--white); background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .post-info {
+    flex: 1; padding: 24px;
+    display: flex; flex-direction: column;
+  }
+  .post-meta {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .post-type {
     font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.8px; padding: 4px 10px; border-radius: 6px;
-    background: var(--blue-soft); color: var(--blue-dark);
+    letter-spacing: 1px; padding: 4px 10px; border-radius: 4px;
+    background: var(--blue-light); color: var(--blue-dark);
   }
   .post-date {
-    font-size: 13px; color: var(--text-sec); font-weight: 500;
+    font-size: 12px; color: var(--grau); font-weight: 500;
     margin-left: auto;
   }
 
-  .post-card-body { padding: 24px; }
-
-  .post-caption {
-    font-size: 13px; color: var(--text-sec); line-height: 1.7;
-    margin-bottom: 24px; padding: 16px;
-    background: var(--bg); border-radius: var(--radius-xs);
-    border-left: 3px solid var(--blue);
-    max-height: 80px; overflow: hidden; position: relative;
-  }
-  .post-caption::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-    height: 30px; background: linear-gradient(transparent, var(--bg));
-  }
-
-  /* Metrics Grid */
+  /* Metrics Grid inside post */
   .metrics-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    gap: 8px;
+    flex: 1;
   }
   .metric {
-    background: var(--bg);
-    border-radius: var(--radius-xs);
-    padding: 16px 12px;
+    padding: 12px 8px;
     text-align: center;
-    border: 1px solid transparent;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .metric:hover {
-    border-color: var(--blue);
-    background: var(--blue-soft);
+    border-radius: var(--radius-xs);
+    background: var(--hellgrau);
   }
   .metric .num {
-    font-size: 24px; font-weight: 800; color: var(--text);
+    font-size: 20px; font-weight: 800; color: var(--anthrazit);
     letter-spacing: -0.3px;
   }
   .metric .lbl {
-    font-size: 10px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 1.2px; color: var(--text-muted); margin-top: 3px;
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--grau); margin-top: 2px;
   }
-  .metric.highlight { background: var(--blue-soft); border-color: var(--blue-mid); }
-  .metric.highlight .num { color: var(--blue-dark); }
+  .metric.highlight {
+    background: var(--black);
+  }
+  .metric.highlight .num { color: var(--white); }
+  .metric.highlight .lbl { color: var(--grau); }
 
   .post-card-footer {
-    padding: 16px 24px; border-top: 1px solid var(--border);
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
     display: flex; align-items: center; justify-content: flex-end;
   }
   .post-link {
-    font-size: 13px; color: var(--blue-dark); text-decoration: none;
-    font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; color: var(--blue-dark); text-decoration: none;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    display: inline-flex; align-items: center; gap: 6px;
     transition: gap 0.2s;
   }
-  .post-link:hover { gap: 8px; }
-  .post-link .arrow { transition: transform 0.2s; }
-  .post-link:hover .arrow { transform: translateX(2px); }
+  .post-link:hover { gap: 10px; }
 
   /* Loading / Error */
   .loading, .error-msg { text-align: center; padding: 80px 20px; }
   .loading .spinner {
-    width: 44px; height: 44px;
+    width: 40px; height: 40px;
     border: 3px solid var(--border);
     border-top-color: var(--blue);
     border-radius: 50%;
@@ -250,34 +213,36 @@
     margin: 0 auto 20px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .error-msg h2 { color: var(--red); margin-bottom: 8px; font-size: 20px; }
 
   /* Footer */
   .report-footer {
-    text-align: center; padding: 40px 0 48px;
-    font-size: 12px; color: var(--text-muted);
-    border-top: 1px solid var(--border);
-    margin-top: 20px;
+    text-align: center; padding: 48px 0 56px;
+    font-size: 11px; color: var(--grau); font-weight: 500;
+    letter-spacing: 0.5px;
   }
   .report-footer a {
-    color: var(--blue-dark); text-decoration: none; font-weight: 600;
+    color: var(--anthrazit); text-decoration: none; font-weight: 700;
   }
-  .report-footer a:hover { text-decoration: underline; }
+  .report-footer a:hover { color: var(--blue-dark); }
+  .report-footer .footer-line {
+    width: 40px; height: 2px; background: var(--border);
+    margin: 0 auto 16px;
+  }
 
   @media (max-width: 768px) {
     .summary-grid { grid-template-columns: repeat(2, 1fr); }
     .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-    .hero h1 { font-size: 24px; }
-    .hero { padding: 36px 20px 52px; }
-    .summary-section { margin-top: -28px; }
+    .post-card-top { flex-direction: column; }
+    .post-thumb { width: 100%; min-height: 180px; max-height: 240px; }
+    .hero h1 { font-size: 22px; }
+    .hero { padding: 36px 20px 48px; }
   }
   @media (max-width: 480px) {
-    .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .summary-card { padding: 16px 12px; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .summary-card { padding: 20px 12px; }
     .summary-card .value { font-size: 24px; }
-    .post-card-body { padding: 16px; }
-    .post-card-header { padding: 14px 16px; }
+    .post-info { padding: 16px; }
+    .metric .num { font-size: 16px; }
   }
 </style>
 </head>
@@ -286,13 +251,10 @@
 <!-- Hero -->
 <div class="hero">
   <div class="hero-content">
-    <img src="logo-dark.svg" alt="Hashtag Hamburg" onerror="this.src='logo.svg'">
+    <img src="logo-dark.svg" alt="#hamburg" onerror="this.src='logo.svg'">
     <h1 id="reportTitle">Campaign Report</h1>
-    <div class="subtitle" id="reportSubtitle">Wird geladen...</div>
-    <div class="post-count-badge" id="postCountBadge" style="display:none;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3v18h18"/><path d="m7 17 4-8 4 4 6-10"/></svg>
-      <span id="postCountText"></span>
-    </div>
+    <div class="subtitle" id="reportSubtitle"></div>
+    <div class="post-count" id="postCount" style="display:none;"></div>
   </div>
 </div>
 
@@ -300,25 +262,26 @@
   <!-- Loading -->
   <div class="loading" id="loadingState">
     <div class="spinner"></div>
-    <div style="color: var(--text-sec); font-size: 14px;">Insights werden geladen...</div>
+    <div style="color: var(--grau); font-size: 13px; font-weight: 500;">Insights werden geladen...</div>
   </div>
 
   <!-- Error -->
   <div class="error-msg" id="errorState" style="display:none;">
-    <h2>Report nicht gefunden</h2>
-    <p style="color: var(--text-sec);">Dieser Link ist ungÃ¼ltig oder der Report existiert nicht mehr.</p>
+    <h2 style="font-size:18px; font-weight:800; margin-bottom:8px;">Report nicht gefunden</h2>
+    <p style="color: var(--grau); font-size: 13px;">Dieser Link ist nicht mehr aktiv.</p>
   </div>
 
-  <!-- Summary (hidden until loaded) -->
+  <!-- Summary -->
   <div class="summary-section" id="summarySection" style="display:none;">
     <div class="summary-grid" id="summaryGrid"></div>
   </div>
 
   <!-- Posts -->
-  <div class="posts-section" id="postsSection" style="display:none;"></div>
+  <div id="postsSection" style="display:none;"></div>
 
   <div class="report-footer">
-    Erstellt von <a href="https://hashtaghamburg.de" target="_blank">Hashtag Hamburg</a>
+    <div class="footer-line"></div>
+    <a href="https://hashtaghamburg.de" target="_blank">#hamburg</a> &middot; Performance Report
   </div>
 </div>
 
@@ -326,31 +289,36 @@
 (async function() {
   const params = new URLSearchParams(window.location.search);
   const token = params.get('t');
-
   if (!token) { showError(); return; }
 
   try {
-    const configRes = await fetch(`/api/reports?t=${token}`);
+    const configRes = await fetch('/api/reports?t=' + token);
     if (!configRes.ok) { showError(); return; }
     const configData = await configRes.json();
     if (!configData.success) { showError(); return; }
 
     const report = configData.data;
-    document.getElementById('reportTitle').textContent = report.clientName;
-    document.getElementById('reportSubtitle').textContent =
-      `Erstellt am ${new Date(report.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}`;
-    document.title = `${report.clientName} â Campaign Report`;
 
-    const badge = document.getElementById('postCountBadge');
-    badge.style.display = 'inline-flex';
-    document.getElementById('postCountText').textContent =
-      `${report.posts.length} Post${report.posts.length > 1 ? 's' : ''} analysiert`;
+    // Fix encoding: replace garbled em-dash with proper dash
+    const title = (report.clientName || 'Campaign Report')
+      .replace(/\u00e2\u20ac[\u201c\u201d\u0094\u2014]?/g, '-')
+      .replace(/Ã¢â¬["\u0094]?/g, '-');
+
+    document.getElementById('reportTitle').textContent = title;
+    document.title = title + ' - #hamburg Report';
+
+    const created = new Date(report.createdAt);
+    document.getElementById('reportSubtitle').textContent =
+      created.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
+
+    const pc = document.getElementById('postCount');
+    pc.style.display = 'inline-block';
+    pc.textContent = report.posts.length + (report.posts.length === 1 ? ' Post' : ' Posts');
 
     // Fetch insights
     const results = [];
     for (const post of report.posts) {
       try {
-        let insightData;
         if (post.platform === 'instagram') {
           const res = await fetch('/api/insights', {
             method: 'POST',
@@ -358,13 +326,13 @@
             body: JSON.stringify(post.mediaId ? { mediaId: post.mediaId } : { url: post.url }),
           });
           const json = await res.json();
-          insightData = json.data || json;
-        } else if (post.platform === 'tiktok') {
-          insightData = { platform: 'tiktok', type: 'Video', insights: {}, permalink: post.url, caption: 'TikTok Video' };
+          const d = json.data || json;
+          results.push({ ...d, _url: post.url, _platform: post.platform });
+        } else {
+          results.push({ platform: 'tiktok', type: 'Video', insights: {}, _url: post.url, _platform: 'tiktok' });
         }
-        if (insightData) results.push({ ...insightData, _postUrl: post.url, _platform: post.platform });
       } catch (e) {
-        results.push({ error: e.message, _postUrl: post.url, _platform: post.platform });
+        results.push({ error: e.message, _url: post.url, _platform: post.platform });
       }
     }
 
@@ -395,98 +363,98 @@ function fmt(n) {
 
 function renderSummary(results) {
   const grid = document.getElementById('summaryGrid');
-  const valid = results.filter(r => r.insights);
+  const valid = results.filter(function(r) { return r.insights; });
 
-  let totalReach = 0, totalLikes = 0, totalComments = 0, totalShares = 0, totalSaves = 0, totalInteractions = 0;
-  for (const r of valid) {
-    const i = r.insights || {};
-    totalReach += i.reach || 0;
-    totalLikes += i.likes || 0;
-    totalComments += i.comments || 0;
-    totalShares += i.shares || 0;
-    totalSaves += i.saves || 0;
-    totalInteractions += i.totalInteractions || 0;
+  var totals = { reach: 0, likes: 0, comments: 0, shares: 0, saves: 0, interactions: 0 };
+  for (var j = 0; j < valid.length; j++) {
+    var i = valid[j].insights || {};
+    totals.reach += i.reach || 0;
+    totals.likes += i.likes || 0;
+    totals.comments += i.comments || 0;
+    totals.shares += i.shares || 0;
+    totals.saves += i.saves || 0;
+    totals.interactions += i.totalInteractions || 0;
   }
 
-  const metrics = [
-    { value: fmt(totalReach), label: 'Reichweite', icon: '\uD83D\uDC41\uFE0F', cls: 'reach' },
-    { value: fmt(totalInteractions || (totalLikes+totalComments+totalShares+totalSaves)), label: 'Interaktionen', icon: '\u26A1', cls: 'interactions' },
-    { value: fmt(totalLikes), label: 'Likes', icon: '\u2764\uFE0F', cls: 'likes' },
-    { value: fmt(totalComments), label: 'Kommentare', icon: '\uD83D\uDCAC', cls: 'comments' },
-    { value: fmt(totalShares), label: 'Shares', icon: '\uD83D\uDD01', cls: 'shares' },
-    { value: fmt(totalSaves), label: 'Saves', icon: '\uD83D\uDD16', cls: 'saves' },
+  var items = [
+    { v: fmt(totals.reach), l: 'Reichweite', hl: true },
+    { v: fmt(totals.interactions || (totals.likes+totals.comments+totals.shares+totals.saves)), l: 'Interaktionen' },
+    { v: fmt(totals.likes), l: 'Likes' },
+    { v: fmt(totals.comments), l: 'Kommentare' },
+    { v: fmt(totals.shares), l: 'Shares' },
+    { v: fmt(totals.saves), l: 'Saves' },
   ];
 
-  grid.innerHTML = metrics.map(m => `
-    <div class="summary-card">
-      <div class="icon ${m.cls}">${m.icon}</div>
-      <div class="value">${m.value}</div>
-      <div class="label">${m.label}</div>
-    </div>
-  `).join('');
+  grid.innerHTML = items.map(function(m) {
+    return '<div class="summary-card' + (m.hl ? ' highlight' : '') + '">' +
+      '<div class="value">' + m.v + '</div>' +
+      '<div class="label">' + m.l + '</div></div>';
+  }).join('');
 }
 
 function renderPosts(results) {
-  const section = document.getElementById('postsSection');
+  var section = document.getElementById('postsSection');
+  var html = '<div class="section-header"><h2>Post Details</h2></div>';
 
-  let html = `<div class="section-title">Einzelne Posts <span class="line"></span></div>`;
-
-  html += results.map((r, idx) => {
+  for (var idx = 0; idx < results.length; idx++) {
+    var r = results[idx];
     if (r.error) {
-      return `<div class="post-card">
-        <div class="post-card-header">
-          <span class="platform-badge ${r._platform}">${r._platform}</span>
-          <span class="post-date" style="color: var(--red);">Fehler: ${r.error}</span>
-        </div>
-      </div>`;
+      html += '<div class="post-card"><div class="post-info" style="padding:24px;color:var(--grau);">Fehler: ' + r.error + '</div></div>';
+      continue;
     }
 
-    const i = r.insights || {};
-    const platform = r._platform || r.platform || 'instagram';
-    const caption = r.caption ? r.caption.substring(0, 200) : '';
-    const postDate = r.date ? new Date(r.date).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
+    var i = r.insights || {};
+    var platform = r._platform || r.platform || 'instagram';
+    var postDate = r.date ? new Date(r.date).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
+    var thumb = r.thumbnailUrl || '';
 
-    const metricItems = [
-      { num: fmt(i.reach), lbl: 'Reichweite', hl: true },
-      { num: fmt(i.likes), lbl: 'Likes' },
-      { num: fmt(i.comments), lbl: 'Kommentare' },
-      { num: fmt(i.shares), lbl: 'Shares' },
-      { num: fmt(i.saves), lbl: 'Saves' },
-      { num: fmt(i.totalInteractions), lbl: 'Gesamt' },
+    var metrics = [
+      { n: fmt(i.reach), l: 'Reichweite', hl: true },
+      { n: fmt(i.likes), l: 'Likes' },
+      { n: fmt(i.comments), l: 'Kommentare' },
+      { n: fmt(i.shares), l: 'Shares' },
+      { n: fmt(i.saves), l: 'Saves' },
+      { n: fmt(i.totalInteractions), l: 'Gesamt' },
     ];
 
     if (i.avgWatchTime) {
-      metricItems.push({ num: (i.avgWatchTime / 1000).toFixed(1) + 's', lbl: 'Avg. Watch' });
+      metrics.push({ n: (i.avgWatchTime / 1000).toFixed(1) + 's', l: 'Avg. Watch' });
     }
     if (i.totalWatchTime) {
-      const hours = (i.totalWatchTime / 1000 / 3600).toFixed(1);
-      metricItems.push({ num: hours + 'h', lbl: 'Watch Time' });
+      metrics.push({ n: (i.totalWatchTime / 1000 / 3600).toFixed(1) + 'h', l: 'Watch Time' });
     }
 
-    const metricsHTML = metricItems.map(m =>
-      `<div class="metric${m.hl ? ' highlight' : ''}">
-        <div class="num">${m.num}</div>
-        <div class="lbl">${m.lbl}</div>
-      </div>`
-    ).join('');
+    var metricsHTML = metrics.map(function(m) {
+      return '<div class="metric' + (m.hl ? ' highlight' : '') + '">' +
+        '<div class="num">' + m.n + '</div>' +
+        '<div class="lbl">' + m.l + '</div></div>';
+    }).join('');
 
-    return `<div class="post-card">
-      <div class="post-card-header">
-        <span class="platform-badge ${platform}">${platform}</span>
-        <span class="post-type-tag">${r.type || 'Post'}</span>
-        <span class="post-date">${postDate}</span>
-      </div>
-      <div class="post-card-body">
-        ${caption ? `<div class="post-caption">${caption}</div>` : ''}
-        <div class="metrics-grid">${metricsHTML}</div>
-      </div>
-      ${r.permalink ? `<div class="post-card-footer">
-        <a class="post-link" href="${r.permalink}" target="_blank">
-          Post ansehen <span class="arrow">\u2192</span>
-        </a>
-      </div>` : ''}
-    </div>`;
-  }).join('');
+    html += '<div class="post-card"><div class="post-card-top">';
+
+    // Thumbnail
+    if (thumb) {
+      html += '<div class="post-thumb">' +
+        '<img src="' + thumb + '" alt="" loading="lazy">' +
+        '<span class="platform-tag">' + platform + '</span></div>';
+    }
+
+    html += '<div class="post-info">' +
+      '<div class="post-meta">' +
+        '<span class="post-type">' + (r.type || 'Post') + '</span>' +
+        '<span class="post-date">' + postDate + '</span>' +
+      '</div>' +
+      '<div class="metrics-grid">' + metricsHTML + '</div>' +
+    '</div></div>';
+
+    if (r.permalink) {
+      html += '<div class="post-card-footer">' +
+        '<a class="post-link" href="' + r.permalink + '" target="_blank">' +
+        'Post ansehen <span>\u2192</span></a></div>';
+    }
+
+    html += '</div>';
+  }
 
   section.innerHTML = html;
 }
