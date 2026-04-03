@@ -3,9 +3,12 @@
  * Replaces the Zapier "Deal Won → Status Kunde & Telegram Notification" Zap.
  *
  * Flow:
- *   1. Close CRM fires webhook when Opportunity status → "Won - Angebot angenommen"
- *   2. This function updates the Lead status to "Kunde" via Close API
- *   3. Sends a Telegram notification via Bot API
+ *   1. Close CRM fires webhook on any opportunity.updated event
+ *   2. This function checks: is new status a Won status AND was previous status NOT Won?
+ *      → Only fires on FIRST transition to Won (covers direct jumps to any Won sub-status)
+ *      → Skips Won→Won transitions (e.g. Angebot angenommen → Inkasso)
+ *   3. Updates Lead status to "Kunde" via Close API
+ *   4. Sends a Telegram notification via Bot API
  *
  * Required env vars (Cloudflare dashboard → Settings → Environment Variables):
  *   - CLOSE_API_KEY
@@ -14,7 +17,7 @@
  *
  * Close CRM Webhook Setup:
  *   URL:  https://hashtaghamburg.de/api/deal-won   (or your domain)
- *   Event: opportunity.status_change  (filter: new_status = "Won - Angebot angenommen")
+ *   Event: opportunity.updated  (no server-side filter — filtering done in this function)
  */
 
 const corsHeaders = {
@@ -78,18 +81,33 @@ export async function onRequestPost(context) {
 
     const payload = await context.request.json();
 
+    // ── DEBUG MODE: Send raw payload to Telegram for testing ──
+    // Activate by adding ?debug=1 to the webhook URL
+    const url = new URL(context.request.url);
+    if (url.searchParams.get('debug') === '1') {
+      const debugMsg = `🔍 <b>Deal-Won Debug Payload:</b>\n<pre>${JSON.stringify(payload, null, 2).slice(0, 3500)}</pre>`;
+      await sendTelegram(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, debugMsg);
+      return new Response(JSON.stringify({ debug: true, payload }), { status: 200, headers: corsHeaders });
+    }
+
     // ── Extract opportunity data from Close webhook ──
-    // Close sends: { event: { object_type, action, ... }, data: { ... } }
+    // Close sends: { subscription_id, event: { action, object_type, data: {...}, previous_data: {...}, ... } }
     const event = payload.event || {};
-    const data = payload.data || payload;
+    const data = event.data || payload.data || payload;
+    const previousData = event.previous_data || {};
 
-    // ── FILTER: Only proceed if opportunity status changed to "Won" ──
-    // Close webhook payload has data.status_label or data.new_status_label
-    const opportunityId = data.id || data.opportunity_id || event.data?.id || '';
-    const statusLabel = data.status_label || data.new_status_label || '';
-    const statusType = data.status_type || data.new_status_type || '';
+    // ── FILTER: Only fire on FIRST transition to a Won status ──
+    // Fire:   non-won → any Won status (Angebot angenommen, Rechnung teilweise bezahlt, Rechnung bezahlt)
+    // Skip:   Won → Won transitions (e.g. Angebot angenommen → Inkasso/Rechnung bezahlt)
+    // Skip:   Transitions to non-won statuses
 
-    // Fetch the opportunity to check its current status if not in payload
+    const opportunityId = data.id || event.object_id || '';
+    const statusLabel = data.status_label || '';
+    const statusType = data.status_type || '';
+    const prevStatusLabel = previousData.status_label || '';
+    const prevStatusType = previousData.status_type || '';
+
+    // Fetch the opportunity if we don't have status info in payload
     let opp = null;
     if (opportunityId && !statusLabel) {
       opp = await closeAPI('GET', `opportunity/${opportunityId}`, CLOSE_API_KEY);
@@ -98,19 +116,31 @@ export async function onRequestPost(context) {
     const resolvedStatusLabel = statusLabel || (opp && opp.status_label) || '';
     const resolvedStatusType = statusType || (opp && opp.status_type) || '';
 
-    // Only fire on "Won" status — ignore all other changes
-    const isWon = resolvedStatusType === 'won'
-      || resolvedStatusLabel.toLowerCase().includes('won')
-      || resolvedStatusLabel.toLowerCase().includes('angenommen');
+    // Won statuses that should trigger (on first entry)
+    const wonLabels = [
+      'won - angebot angenommen',
+      'won - rechnung teilweise bezahlt',
+      'won - rechnung bezahlt',
+    ];
 
-    if (!isWon) {
+    const isNewStatusWon = resolvedStatusType === 'won'
+      && wonLabels.includes(resolvedStatusLabel.toLowerCase());
+
+    // Check if previous status was already a won-type (= Won→Won transition, skip)
+    const wasPreviouslyWon = prevStatusType === 'won'
+      || prevStatusLabel.toLowerCase().startsWith('won')
+      || prevStatusLabel.toLowerCase() === 'inkasso';
+
+    if (!isNewStatusWon || wasPreviouslyWon) {
       return new Response(JSON.stringify({
         skipped: true,
-        reason: `Status "${resolvedStatusLabel}" (type: ${resolvedStatusType}) is not Won`,
+        reason: !isNewStatusWon
+          ? `New status "${resolvedStatusLabel}" is not a target Won status`
+          : `Previous status "${prevStatusLabel}" was already Won — skipping Won→Won transition`,
       }), { status: 200, headers: corsHeaders });
     }
 
-    const leadId = data.lead_id || event.data?.lead_id || (opp && opp.lead_id) || '';
+    const leadId = data.lead_id || event.lead_id || (opp && opp.lead_id) || '';
     const opportunityValue = data.value || data.annualized_value || (opp && opp.value) || 0;
     const opportunityNote = data.note || (opp && opp.note) || '';
     const contactName = data.contact_name || data.lead_name || '';
@@ -138,8 +168,6 @@ export async function onRequestPost(context) {
     const finalNote = opportunityNote || resolvedNote || '';
 
     // ── 1. Update Lead status to "Kunde" ──
-    // Find the "Kunde" status ID. Close uses status IDs, not labels.
-    // We'll search for it, or update by label.
     let leadInfo;
     try {
       leadInfo = await closeAPI('GET', `lead/${finalLeadId}`, CLOSE_API_KEY);
@@ -150,10 +178,8 @@ export async function onRequestPost(context) {
     }
 
     const leadName = leadInfo.display_name || contactName || 'Unbekannt';
-    // Custom Field "Quelle" in Close CRM
     const leadSource = leadInfo['custom.cf_V6HRCPxKnerOXkYojfnQ23DBFN0HVC9eisclazlw2OL'] || '';
 
-    // Get all lead statuses to find "Kunde"
     const statuses = await closeAPI('GET', 'status/lead/', CLOSE_API_KEY);
     const kundeStatus = (statuses.data || []).find(
       s => s.label.toLowerCase() === 'kunde'
@@ -164,7 +190,6 @@ export async function onRequestPost(context) {
         status_id: kundeStatus.id,
       });
     } else {
-      // Fallback: log warning but continue
       console.warn('Lead status "Kunde" not found in Close. Skipping status update.');
     }
 
@@ -194,7 +219,6 @@ export async function onRequestPost(context) {
     }), { status: 200, headers: corsHeaders });
 
   } catch (err) {
-    // On error, still try to send Telegram alert
     try {
       if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
         await sendTelegram(
